@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:mobile_pizzaria/services/order.service.dart';
 import 'package:mobile_pizzaria/services/pizza.service.dart';
 import 'customer_screen.dart';
 
@@ -15,6 +16,7 @@ class _PizzaState extends State<Pizza> {
   List<Map<String, dynamic>> pizzas = [];
   Map<int, int> selectedPizzas = {};
   var idCustomer;
+  var idPizzas = [];
 
   @override
   void initState() {
@@ -172,13 +174,20 @@ class _PizzaState extends State<Pizza> {
                 // Printar os IDs das pizzas selecionadas aqui
                 selectedPizzas.forEach((index, quantity) {
                   for (int i = 0; i < quantity; i++) {
-                    print(pizzas[index]['_id']);
+                    // print(pizzas[index]['_id']);
+                    idPizzas.add(pizzas[index]['_id']);
                   }
                 });
-                Navigator.of(context).pop();
-                setState(() {
-                  selectedPizzas.clear();
-                });
+                if (idPizzas.isNotEmpty) {
+                  createOrder(json.encode({
+                    'customer': idCustomer,
+                    'pizzas': idPizzas,
+                  })).then((res) => print(res.body));
+                  setState(() {
+                    selectedPizzas.clear();
+                  });
+                  Navigator.of(context).pop();
+                } else {}
               },
               child: Text('Finalizar Pedido'),
             ),

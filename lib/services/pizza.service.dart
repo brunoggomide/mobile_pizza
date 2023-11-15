@@ -6,9 +6,3 @@ Future getPizzasService() async {
     Uri.parse(apiUrl + 'pizzas'),
   );
 }
-
-Future getPizzasById(id) async {
-  return http.get(
-    Uri.parse(apiUrl + 'pizzas/' + id),
-  );
-}

@@ -9,9 +9,3 @@ Future createCustomer(customer) async {
     body: customer,
   );
 }
-
-Future getCustomerById(id) async {
-  return http.post(
-    Uri.parse(apiUrl + 'customers/' + id),
-  );
-}
