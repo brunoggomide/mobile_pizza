@@ -26,11 +26,6 @@ class _CustomerState extends State<Customer> {
     prefs.setString('customerId', customerId);
   }
 
-  Future<String?> getCustomerId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('customerId');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

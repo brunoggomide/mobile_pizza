@@ -3,10 +3,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile_pizzaria/services/order.service.dart';
 import 'package:mobile_pizzaria/services/pizza.service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'customer_screen.dart';
 
 class Pizza extends StatefulWidget {
   const Pizza({Key? key}) : super(key: key);
+
+  static Future<String?> getOrder() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('orderId');
+  }
 
   @override
   State<Pizza> createState() => _PizzaState();
@@ -16,6 +22,7 @@ class _PizzaState extends State<Pizza> {
   List<Map<String, dynamic>> pizzas = [];
   Map<int, int> selectedPizzas = {};
   var idCustomer;
+  var idOrder;
   var idPizzas = [];
 
   @override
@@ -37,8 +44,19 @@ class _PizzaState extends State<Pizza> {
     });
   }
 
+  Future<void> saveOrderId(String orderId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('orderId', orderId);
+  }
+
+  Future<String?> getOrderId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('orderId');
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(idOrder);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -92,20 +110,22 @@ class _PizzaState extends State<Pizza> {
           Container(
             padding: const EdgeInsets.all(10),
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              onPressed: () {
-                _showOrderDialog();
-              },
-              child: const Text(
-                'Fazer pedido',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+            child: idOrder == null
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    onPressed: () {
+                      _showOrderDialog();
+                    },
+                    child: const Text(
+                      'Fazer pedido',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : Container(),
           ),
         ],
       ),
@@ -178,16 +198,36 @@ class _PizzaState extends State<Pizza> {
                     idPizzas.add(pizzas[index]['_id']);
                   }
                 });
-                if (idPizzas.isNotEmpty) {
+                if (idCustomer != null && idPizzas.isNotEmpty) {
                   createOrder(json.encode({
                     'customer': idCustomer,
                     'pizzas': idPizzas,
-                  })).then((res) => print(res.body));
-                  setState(() {
-                    selectedPizzas.clear();
+                  })).then((res) {
+                    print(res.body);
+                    if (res.statusCode == 201) {
+                      final Map<String, dynamic> data = json.decode(res.body);
+                      final String orderId = data['order']['_id'];
+                      saveOrderId(orderId);
+                      setState(() {
+                        idOrder = getOrderId();
+                        selectedPizzas.clear();
+                      });
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.green[300],
+                          content: const Text(
+                            'Pedido criado com sucesso',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
                   });
-                  Navigator.of(context).pop();
-                } else {}
+                } else {
+                  print('teste');
+                }
               },
               child: Text('Finalizar Pedido'),
             ),
