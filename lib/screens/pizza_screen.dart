@@ -24,6 +24,7 @@ class _PizzaState extends State<Pizza> {
   var idCustomer;
   var idOrder;
   var idPizzas = [];
+  bool showOrderButton = false;
 
   @override
   void initState() {
@@ -33,14 +34,23 @@ class _PizzaState extends State<Pizza> {
         idCustomer = customerId;
       });
     });
+
     getPizzasService().then((res) {
       if (res.statusCode == 200) {
         List<dynamic> pizzaList = jsonDecode(res.body);
-
         setState(() {
           pizzas = List<Map<String, dynamic>>.from(pizzaList);
         });
       }
+    });
+
+    availableButton();
+  }
+
+  availableButton() async {
+    idOrder = await getOrderId();
+    setState(() {
+      showOrderButton = idOrder == null;
     });
   }
 
@@ -110,7 +120,7 @@ class _PizzaState extends State<Pizza> {
           Container(
             padding: const EdgeInsets.all(10),
             width: double.infinity,
-            child: idOrder == null
+            child: showOrderButton
                 ? ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -208,8 +218,8 @@ class _PizzaState extends State<Pizza> {
                       final Map<String, dynamic> data = json.decode(res.body);
                       final String orderId = data['order']['_id'];
                       saveOrderId(orderId);
+                      availableButton();
                       setState(() {
-                        idOrder = getOrderId();
                         selectedPizzas.clear();
                       });
                       Navigator.of(context).pop();
