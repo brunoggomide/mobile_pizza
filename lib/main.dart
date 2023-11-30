@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_pizzaria/screens/base_screen.dart';
 import 'package:mobile_pizzaria/screens/customer_screen.dart';
 
 void main() {

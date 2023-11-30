@@ -38,6 +38,9 @@ class _PizzaState extends State<Pizza> {
     getPizzasService().then((res) {
       if (res.statusCode == 200) {
         List<dynamic> pizzaList = jsonDecode(res.body);
+
+        pizzaList.sort((a, b) => a['name'].compareTo(b['name']));
+
         setState(() {
           pizzas = List<Map<String, dynamic>>.from(pizzaList);
         });
@@ -182,7 +185,9 @@ class _PizzaState extends State<Pizza> {
                       onPressed: () {
                         if (selectedPizzas[index] != null &&
                             selectedPizzas[index]! > 0) {
-                          selectedPizzas[index] = selectedPizzas[index]! - 1;
+                          setState(() {
+                            selectedPizzas[index] = selectedPizzas[index]! - 1;
+                          });
                         }
                         if (selectedPizzas[index] == 0) {
                           selectedPizzas.remove(index);
@@ -201,10 +206,8 @@ class _PizzaState extends State<Pizza> {
             Text('Preço Total: R\$ $totalPrice'),
             ElevatedButton(
               onPressed: () {
-                // Printar os IDs das pizzas selecionadas aqui
                 selectedPizzas.forEach((index, quantity) {
                   for (int i = 0; i < quantity; i++) {
-                    // print(pizzas[index]['_id']);
                     idPizzas.add(pizzas[index]['_id']);
                   }
                 });

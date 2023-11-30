@@ -25,7 +25,6 @@ class _OrderState extends State<Order> {
     super.initState();
     orderDetails = getOrder();
 
-    // Set up a timer to call getOrderById every 10 seconds
     _timer = Timer.periodic(Duration(seconds: 10), (Timer timer) {
       getOrderById(idOrder).then((res) {
         print(res.body);
@@ -33,16 +32,13 @@ class _OrderState extends State<Order> {
           setState(() {
             orderDetails = Future.value(jsonDecode(res.body));
           });
-        } else {
-          // Handle error, you might want to show an error message to the user
-        }
+        } else {}
       });
     });
   }
 
   @override
   void dispose() {
-    // Cancel the timer when the widget is disposed
     _timer.cancel();
     super.dispose();
   }
@@ -56,11 +52,9 @@ class _OrderState extends State<Order> {
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
       } else {
-        // Handle error, you might want to show an error message to the user
         return Map<String, dynamic>();
       }
     } else {
-      // Handle the case where orderId is null
       return Map<String, dynamic>();
     }
   }
