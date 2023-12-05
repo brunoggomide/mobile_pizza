@@ -51,8 +51,6 @@ class _CustomerState extends State<Customer> {
               height: 50,
               child: TextFormField(
                 controller: nameController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.person),
                   labelText: 'Nome',
@@ -68,6 +66,8 @@ class _CustomerState extends State<Customer> {
               height: 150,
               child: TextFormField(
                 controller: tableController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.table_chart),
                   labelText: 'Número da mesa',

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:mobile_pizzaria/screens/customer_screen.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(
+      DevicePreview(
+        builder: (context) => const MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       home: const Customer(),
     );
